@@ -65,6 +65,8 @@ int main() {
 
 void menu(){
     cout << "======================================" << endl;
+    cout << "=      --- SCI-CALCULATOR ---        = " << endl;
+    cout << "======================================" << endl;
     cout << "         MENU DE OPCIONES            " << endl;
     cout << "======================================" << endl;
     cout << "1. Obtener la potencia n de un número." << endl;
@@ -94,33 +96,23 @@ void finish_execution() {
     cin.get(); // Wait until the user press ENTER
 }
 
-
 void get_slope() {
     float x1, y1, x2, y2;
     float result = 0;
-    char comma; // To read and ignore the comma
-    string input1, input2; // Input treated as string
     
-    cout << "Utiliza el siguiente formato: 1,2 | 5,9 | 8,4" << endl << endl;
+    cout << "Utiliza el siguiente formato: 5 9 (cada valor separado por un espacio)" << endl << endl;
     
     cout << "--> Ingresa las coordenadas del primer punto (x1, y1): ";
-    getline(cin, input1); // Read the entire line as a string
+    cin >> x1 >> y1;
     
     cout << "--> Ingresa las coordenadas del segundo punto (x2, y2): ";
-    getline(cin, input2); // Read the entire line as a string
-
-    // Using stringstream to parse the input based on the comma delimiter
-    stringstream ss1(input1);
-    stringstream ss2(input2);
-
-    ss1 >> x1 >> comma >> y1;
-    ss2 >> x2 >> comma >> y2;
+    cin >> x2 >> y2;
 
     if (x2 - x1 == 0) {
         cout << "\n* ERROR: División por cero. Los puntos tienen la misma coordenada x." << endl;
     } else {
         result = (y2 - y1) / (x2 - x1);
-        cout << "\n==> La pendiente es: " << "m = " << result << endl;
+        cout << "\n==> Resultado: " << "m = " << result << endl;
     }
 
     finish_execution();
@@ -140,28 +132,28 @@ void get_power() {
 
 void get_quadratic_for_reals(){
     float a, b, c;
-    cout << "Ingresa el valor de a: ";
+    cout << "--> Ingresa el valor de a: ";
     cin >> a;
-    cout << "Ingresa el valor de b: ";
+    cout << "--> Ingresa el valor de b: ";
     cin >> b;
-    cout << "Ingresa el valor de c: ";
+    cout << "--> Ingresa el valor de c: ";
     cin >> c;
    
+    float discriminating = (b * b) - 4 * a * c;
+
     if (a == 0) {
-        cout << "No es ecuación cuadrática, tiene que ser diferente de 0." << endl;
-    }
-        float discriminating = b*b - 4 * a * c;
-        if (discriminating > 0) {
-            float raiz1 = (-b + sqrt(discriminating)) / (2 * a);
-            float raiz2 = (-b - sqrt(discriminating)) / (2 * a);
-            cout << "Raíces reales y distintas: " << endl;
-            cout << "Raíz 1 = " << raiz1 << endl;
-            cout << "Raíz 2 = " << raiz2 << endl;
+        cout << "\n* ERROR: No es una ecuación cuadrática, \"a\" tiene que ser diferente de 0." << endl;
+    } else if (discriminating > 0) {
+        float root1 = (-b + sqrt(discriminating)) / (2 * a);
+        float root2 = (-b - sqrt(discriminating)) / (2 * a);
+        cout << "\nRaíces reales y distintas: " << endl;
+        cout << "--> Raíz 1 = " << root1 << endl;
+        cout << "--> Raíz 2 = " << root2 << endl;
     } else if (discriminating == 0) {
         float raiz = -b / (2 * a);
-        cout << "Raíz real doble: " << raiz << endl;
+        cout << "\n--> Raíz real doble: " << raiz << endl;
     } else {
-        cout << "Esta ecuación tiene raíces complejas por lo que es imposible resolverla unicamente con números reales." << endl;
+        cout << "\n* ADVERTENCIA: Esta ecuación tiene raíces complejas\n  por lo que es imposible resolverla unicamente con números reales." << endl;
     }
 
     finish_execution();
