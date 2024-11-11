@@ -3,16 +3,19 @@
 #include <string>
 #include <cmath> // Math operations
 #include <cstdlib> // System operations --> system()
+#include <iomanip> // For std::setw()
 using namespace std;
 
 // Letting know the compiler what functions we'll use (in advance)
 void clear_console();
 void finish_execution();
+void displayMatrix(const vector<vector<int>>& matrixA);
 void menu();
 void get_power();
 void get_slope();
 void get_quadratic_for_reals();
 void get_quadratic_for_imaginaries();
+void get_matrix_symmetry();
 
 int main() {
     char start_again;
@@ -49,7 +52,9 @@ int main() {
         case 5:
             // cross product
         case 6:
-            // matrix symetry
+            clear_console();
+            get_matrix_symmetry();
+            clear_console();
         case 7:
             // systems of equations
         default:
@@ -98,6 +103,23 @@ void finish_execution() {
     cin.ignore(); // Ignore any characters in the buffer
     cin.get(); // Wait until the user press ENTER
 }
+
+void displayMatrix(const vector<vector<int>>& matrixA) {
+    for (int i = 0; i < matrixA.size(); i++) {
+        for (int j = 0; j < matrixA.size(); j++) {
+            cout << setw(4) << matrixA[i][j] << " |"; // Set a width of 4 for each element
+        }
+        cout << endl;
+        
+        // Print a separator line after each row
+        for (int k = 0; k < matrixA.size(); k++) {
+            cout << " -----";
+        }
+        cout << endl;
+    }
+}
+
+// ----------- Actual get_something functions --------------- //
 
 void get_slope() {
     float x1, y1, x2, y2;
@@ -186,4 +208,47 @@ void get_quadratic_for_imaginaries(){
     }
 
     finish_execution();
+}
+
+void get_matrix_symmetry() {
+    int matrix_size;
+    int cell_value;
+    bool is_symmetric = true;
+    
+    cout << "--> Ingresa el tamano de la matriz (max 4): ";
+    cin >> matrix_size;
+    
+    vector<vector<int>> matrixA(matrix_size, vector<int>(matrix_size));
+    vector<vector<int>> matrixAT(matrix_size, vector<int>(matrix_size));
+
+    for (int i = 0; i < matrixA.size(); i++) {
+        for (int j = 0; j < matrixA.size(); j++) {
+            cout << "--> Ingresa el valor en (" << i << ", " << j << "): ";
+            cin >> cell_value;
+            matrixA[i][j] = cell_value;
+            matrixAT[j][i] = cell_value;
+        }
+    }
+    
+    cout << "\nMatriz Original:" << endl;
+    displayMatrix(matrixA);
+    
+    cout << "\nMatriz traspuesta para verificar simetria:" << endl;
+    displayMatrix(matrixAT);
+    
+    for (int i = 0; i < matrixA.size(); i++) {
+        for (int j = 0; j < matrixA.size(); j++) {
+            if (matrixA[i][j] != matrixAT[i][j]) {
+                is_symmetric = false;
+            }
+        }
+    }
+    
+    if (is_symmetric) {
+        cout << "\n==> La matriz es simetrica" << endl;
+    } else {
+        cout << "\n==> La matriz NO es simetrica" << endl;
+    }
+
+    finish_execution();    
 }
