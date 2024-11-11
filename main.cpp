@@ -12,6 +12,7 @@ void menu();
 void get_power();
 void get_slope();
 void get_quadratic_for_reals();
+void get_quadratic_for_imaginaries();
 
 int main() {
     char start_again;
@@ -42,7 +43,9 @@ int main() {
             clear_console();
             break;
         case 4:
-            // quadratic (complex)
+            clear_console();
+            get_quadratic_for_imaginaries();
+            clear_console();
         case 5:
             // cross product
         case 6:
@@ -154,6 +157,32 @@ void get_quadratic_for_reals(){
         cout << "\n--> Raíz real doble: " << raiz << endl;
     } else {
         cout << "\n* ADVERTENCIA: Esta ecuación tiene raíces complejas\n  por lo que es imposible resolverla unicamente con números reales." << endl;
+    }
+
+    finish_execution();
+}
+
+void get_quadratic_for_imaginaries(){
+    float a, b, c;
+    cout << "--> Ingresa el valor de a: ";
+    cin >> a;
+    cout << "--> Ingresa el valor de b: ";
+    cin >> b;
+    cout << "--> Ingresa el valor de c: ";
+    cin >> c;
+   
+    float discriminating = (b * b) - 4 * a * c;
+
+    if (a == 0) {
+        cout << "\n* ERROR: No es una ecuación cuadrática, \"a\" tiene que ser diferente de 0." << endl;
+    } else if (discriminating < 0) {
+        float root1 = (-b / (2 * a)) + (sqrt(abs(discriminating)) / (2 * a));
+        float root2 = (-b / (2 * a)) - (sqrt(abs(discriminating)) / (2 * a));
+        cout << "\nRaices Imaginarias: " << endl;
+        cout << "--> Raíz 1 = " << root1 << "i" << endl;
+        cout << "--> Raíz 2 = " << root2 << "i" << endl;
+    } else {
+        cout << "\n* ADVERTENCIA: Esta ecuación no tiene raices complejas.\nTe sugerimos utilizar la opción [3] del menu" << endl;
     }
 
     finish_execution();
