@@ -1,1 +1,5 @@
 main_exe
+results_linear.txt
+results_quadratic.txt
+
+.vscode/

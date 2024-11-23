@@ -1,12 +1,31 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <cmath> // Math operations
 #include <cstdlib> // System operations --> system()
 #include <iomanip> // For std::setw()
+#include <fstream> // For file handling
 using namespace std;
 
-// Letting know the compiler what functions we'll use (in advance)
+// ---------------------------------- Structs ---------------------------------- //
+struct QuadraticValues{
+    float a;
+    float b;
+    float c;
+};
+
+struct LinearValues {
+    float m;
+    float b;
+};
+
+struct FunctionRanges {
+    int start_range;
+    int end_range;
+};
+
+// --------- Letting know the compiler what functions we'll use (in advance) --------- //
 void clear_console();
 void finish_execution();
 void displayMatrix(const vector<vector<int>>& matrixA);
@@ -16,7 +35,14 @@ void get_slope();
 void get_quadratic_for_reals();
 void get_quadratic_for_imaginaries();
 void get_matrix_symmetry();
+void tabulate_points();
+void write_points_from_linear(int start_range, int end_range, float m, float b);
+void write_points_from_quadratic(int start_range, int end_range, float a, float b, float c);
+QuadraticValues ask_quadratic_values();
+LinearValues ask_linear_values();
+FunctionRanges ask_function_ranges();
 
+// ---------------------------------- Main ---------------------------------- //
 int main() {
     char start_again;
 
@@ -49,14 +75,21 @@ int main() {
             clear_console();
             get_quadratic_for_imaginaries();
             clear_console();
+            break;
         case 5:
             // cross product
         case 6:
             clear_console();
             get_matrix_symmetry();
             clear_console();
+            break;
         case 7:
             // systems of equations
+        case 8:
+            clear_console();
+            tabulate_points();
+            clear_console();
+            break;
         default:
             // call other function
             break;
@@ -77,17 +110,19 @@ void menu(){
     cout << "======================================" << endl;
     cout << "         MENU DE OPCIONES            " << endl;
     cout << "======================================" << endl;
-    cout << "1. Obtener la potencia n de un número." << endl;
-    cout << "2. Obtener la pendiente de una recta a través de dos puntos (x, y)." << endl;
-    cout << "3. Ecuaciones cuadráticas (reales)." << endl;
-    cout << "4. Ecuaciones cuadráticas (complejas)." << endl;
-    cout << "5. Producto cruz de dos vectores de dimensión 3." << endl;
-    cout << "6. Determinar si una matriz de n x n es simétrica." << endl;
-    cout << "7. Resolución de sistemas de ecuaciones de 3 incógnitas." << endl;
+    cout << "1. Obtener la potencia n de un numero." << endl;
+    cout << "2. Obtener la pendiente de una recta a traves de dos puntos (x, y)." << endl;
+    cout << "3. Ecuaciones cuadraticas (reales)." << endl;
+    cout << "4. Ecuaciones cuadraticas (complejas)." << endl;
+    cout << "5. Producto cruz de dos vectores de dimension 3." << endl;
+    cout << "6. Determinar si una matriz de n x n es simetrica." << endl;
+    cout << "7. Resolucion de sistemas de ecuaciones de 3 incognitas." << endl;
+    cout << "8. Tabular resultados de ecuaciones lineales & cuadraticas (TXT)." << endl;
     cout << "======================================" << endl;
     cout << "Seleccione una opción: ";
 }
 
+// ---------------------------------- Utility Functions ---------------------------------- //
 // Clears console for Windows and Unix/Linux/Mac
 void clear_console() {
 	#ifdef _WIN32
@@ -119,8 +154,101 @@ void displayMatrix(const vector<vector<int>>& matrixA) {
     }
 }
 
-// ----------- Actual get_something functions --------------- //
+void write_points_from_linear(int start_range, int end_range, float m, float b) {
+    ofstream file_for_tabulation;
+    file_for_tabulation.open("results_linear.txt", ios::out);
 
+    if (file_for_tabulation.fail()) {
+        cout << "\n\n==> ERROR: Mientras se guardaba el archivo" << endl;
+        // return 1;  // Exit the program if the file cannot be opened
+    }
+    // X = 3  ==>  Y = 8
+
+    file_for_tabulation << "------------ Puntos Tabulados ------------" << endl << endl;
+    file_for_tabulation << "Rango: [" << start_range << ", " << end_range << "]" << endl;
+    file_for_tabulation << "Ecuacion: y = " << m << "x" << " + " << b << endl << endl;
+
+    for (int x = start_range; x <= end_range; x++) {
+        float y = m * x + b;
+        file_for_tabulation << "X = " << x << "  ==>  Y = " << y << endl;
+    }
+
+    file_for_tabulation.close();
+    cout << "\n==> Puntos correctamente tabulados en el archivo results_linear.txt" << endl;
+    finish_execution();
+}
+
+void write_points_from_quadratic(int start_range, int end_range, float a, float b, float c) {
+    ofstream file_for_tabulation;
+    file_for_tabulation.open("results_quadratic.txt", ios::out);
+
+    if (file_for_tabulation.fail()) {
+        cout << "\n\n==> ERROR: Mientras se guardaba el archivo" << endl;
+        // return 1;  // Exit the program if the file cannot be opened
+    }
+
+    file_for_tabulation << "------------ Puntos Tabulados ------------" << endl << endl;
+    file_for_tabulation << "Rango: [" << start_range << ", " << end_range << "]" << endl;
+    file_for_tabulation << "Ecuacion: y = " << a << "x^2 + " << b << "x + " << c << endl << endl;
+
+    for (int x = start_range; x <= end_range; x++) {
+        float y = (a * pow(x, 2)) + (b * x) + c;
+        file_for_tabulation << "X = " << x << "  ==>  Y = " << y << endl;
+    }
+
+    file_for_tabulation.close();
+    cout << "\n==> Puntos correctamente tabulados en el archivo results_linear.txt" << endl;
+    finish_execution();
+}
+
+QuadraticValues ask_quadratic_values() {
+    float a, b, c;
+    cout << "\n\n--> Ingresa el valor de A: ";
+    cin >> a;
+    cout << "--> Ingresa el valor de B: ";
+    cin >> b;
+    cout << "--> Ingresa el valor de C: ";
+    cin >> c;
+
+    return {a, b, c};
+}
+
+LinearValues ask_linear_values() {
+    float m, b;
+    cout << "\n\n--> Ingresa el valor de M: ";
+    cin >> m;
+    cout << "--> Ingresa el valor de B: ";
+    cin >> b;
+
+    return {m, b};
+}
+
+FunctionRanges ask_function_ranges() {
+    int start_range, end_range;
+
+    cout << "\nEscribe el rango de INICIO: ";
+    cin >> start_range;
+    cout << "Escribe el rango de FIN: ";
+    cin >> end_range;
+
+    return {start_range, end_range};
+}
+
+// ---------------------------------- Main Functions ---------------------------------- //
+// --------- Function #1 --------- //
+void get_power() {
+    float base, expo;
+    cout << "--> Ingresa la base: ";
+    cin >> base;
+    cout << "--> Ingresa el exponente: ";
+    cin >> expo;
+    
+    float res = pow(base, expo);
+    cout << "\n==> Resultado: " << res << endl;
+    finish_execution();
+}
+
+// --------- Function #2 --------- //
 void get_slope() {
     float x1, y1, x2, y2;
     float result = 0;
@@ -143,18 +271,7 @@ void get_slope() {
     finish_execution();
 }
 
-void get_power() {
-    float base, expo;
-    cout << "--> Ingresa la base: ";
-    cin >> base;
-    cout << "--> Ingresa el exponente: ";
-    cin >> expo;
-    
-    float res = pow(base, expo);
-    cout << "\n==> Resultado: " << res << endl;
-    finish_execution();
-}
-
+// --------- Function #3 --------- //
 void get_quadratic_for_reals(){
     float a, b, c;
     cout << "--> Ingresa el valor de a: ";
@@ -184,6 +301,7 @@ void get_quadratic_for_reals(){
     finish_execution();
 }
 
+// --------- Function #4 --------- //
 void get_quadratic_for_imaginaries(){
     float a, b, c;
     cout << "--> Ingresa el valor de a: ";
@@ -210,6 +328,7 @@ void get_quadratic_for_imaginaries(){
     finish_execution();
 }
 
+// --------- Function #6 --------- //
 void get_matrix_symmetry() {
     int matrix_size;
     int cell_value;
@@ -251,4 +370,42 @@ void get_matrix_symmetry() {
     }
 
     finish_execution();    
+}
+
+// --------- Function #8 --------- //
+void tabulate_points() {
+    int user_response;
+
+    cout << "------ Tabular Puntos en Archivo TXT ------" << endl << endl;
+    cout << "[1] Funcion Lineal" << endl;
+    cout << "[2] Funcion Cuadratica" << endl;
+    cout << "\nSeleccione una opción: ";
+    cin >> user_response;
+
+    // Check if input failed (non-numeric input)
+    if (cin.fail()) {
+        cin.clear(); // Clear the error flag
+        cin.ignore(1000, '\n'); // Discard invalid input
+        user_response = -1;
+    }
+
+    switch (user_response) {
+        case 1: {
+            FunctionRanges ranges = ask_function_ranges();
+            LinearValues values = ask_linear_values();
+            write_points_from_linear(ranges.start_range, ranges.end_range, values.m, values.b);
+            break;
+        }
+        case 2: {
+            FunctionRanges ranges = ask_function_ranges();
+            QuadraticValues values = ask_quadratic_values();
+            write_points_from_quadratic(ranges.start_range, ranges.end_range, values.a, values.b, values.c);
+            break;
+        }
+        default: {
+            cout << "\n\n==> ERROR: Debes ingresar una opcion valida!" << endl << endl;
+            finish_execution();
+            break;
+        }
+    }
 }
