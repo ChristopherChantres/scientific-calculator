@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <vector>
 #include <cmath> // Math operations
 #include <cstdlib> // System operations --> system()
 #include <iomanip> // For std::setw()
@@ -34,6 +35,7 @@ void get_power();
 void get_slope();
 void get_quadratic_for_reals();
 void get_quadratic_for_imaginaries();
+void get_cross_product();
 void get_matrix_symmetry();
 void tabulate_points();
 void write_points_from_linear(int start_range, int end_range, float m, float b);
@@ -77,7 +79,10 @@ int main() {
             clear_console();
             break;
         case 5:
-            // cross product
+            clear_console();
+            get_cross_product();
+            clear_console();
+            break;
         case 6:
             clear_console();
             get_matrix_symmetry();
@@ -154,15 +159,14 @@ void displayMatrix(const vector<vector<int>>& matrixA) {
     }
 }
 
+// Function writes tabulated points from a linear equation
 void write_points_from_linear(int start_range, int end_range, float m, float b) {
     ofstream file_for_tabulation;
     file_for_tabulation.open("results_linear.txt", ios::out);
 
     if (file_for_tabulation.fail()) {
         cout << "\n\n==> ERROR: Mientras se guardaba el archivo" << endl;
-        // return 1;  // Exit the program if the file cannot be opened
     }
-    // X = 3  ==>  Y = 8
 
     file_for_tabulation << "------------ Puntos Tabulados ------------" << endl << endl;
     file_for_tabulation << "Rango: [" << start_range << ", " << end_range << "]" << endl;
@@ -174,10 +178,11 @@ void write_points_from_linear(int start_range, int end_range, float m, float b) 
     }
 
     file_for_tabulation.close();
-    cout << "\n==> Puntos correctamente tabulados en el archivo results_linear.txt" << endl;
+    cout << "\n==> Puntos correctamente tabulados en el archivo \"results_linear.txt\"" << endl;
     finish_execution();
 }
 
+// Function writes tabulated points from a quadratic equation
 void write_points_from_quadratic(int start_range, int end_range, float a, float b, float c) {
     ofstream file_for_tabulation;
     file_for_tabulation.open("results_quadratic.txt", ios::out);
@@ -197,10 +202,11 @@ void write_points_from_quadratic(int start_range, int end_range, float a, float 
     }
 
     file_for_tabulation.close();
-    cout << "\n==> Puntos correctamente tabulados en el archivo results_linear.txt" << endl;
+    cout << "\n==> Puntos correctamente tabulados en el archivo \"results_quadratic.txt\"" << endl;
     finish_execution();
 }
 
+// Get data for the quadratic equation (when saving it to a txt file)
 QuadraticValues ask_quadratic_values() {
     float a, b, c;
     cout << "\n\n--> Ingresa el valor de A: ";
@@ -213,6 +219,7 @@ QuadraticValues ask_quadratic_values() {
     return {a, b, c};
 }
 
+// Get data for the linear equation (when saving it to a txt file)
 LinearValues ask_linear_values() {
     float m, b;
     cout << "\n\n--> Ingresa el valor de M: ";
@@ -223,6 +230,7 @@ LinearValues ask_linear_values() {
     return {m, b};
 }
 
+// Ranges established for both quadratic & linear equations (when saving them to a txt file)
 FunctionRanges ask_function_ranges() {
     int start_range, end_range;
 
@@ -324,6 +332,39 @@ void get_quadratic_for_imaginaries(){
     } else {
         cout << "\n* ADVERTENCIA: Esta ecuación no tiene raices complejas.\nTe sugerimos utilizar la opción [3] del menu" << endl;
     }
+
+    finish_execution();
+}
+
+// --------- Function #5 --------- //
+void get_cross_product() {
+    float unit_vector_i = 0;
+    float unit_vector_j = 0;
+    float unit_vector_k = 0;
+    
+    vector<char> letters = {'i', 'j', 'k'};
+    vector<float> v(3);
+    vector<float> w(3);
+    
+    cout << "Valores para el vector [v]" << endl;
+    for (int i = 0; i < 3; i++) {
+        cout << "(" << i + 1 << ") Introduce el valor de [" << letters[i] << "]: ";
+        cin >> v[i];
+    }
+    
+    cout << "\nValores para el vector [w]" << endl;
+    for (int i = 0; i < 3; i++) {
+        cout << "(" << i + 1 << ") Introduce el valor de [" << letters[i] << "]: ";
+        cin >> w[i];
+    }
+    
+    unit_vector_i = (v[1] * w[2]) - (v[2] * w[1]);
+    unit_vector_j = - ((v[0] * w[2]) - (v[2] * w[0]));
+    unit_vector_k = (v[1] * w[1]) - (v[1] * w[0]);
+    
+    cout << "\n\nOperacion ==> v(" << v[0] << ", " << v[1] << ", " << v[2] << ")  X  ";
+    cout << "w(" << w[0] << ", " << w[1] << ", " << w[2] << ")" << endl << endl;
+    cout << "--> El vector resultante (r) es: r(" << unit_vector_i << ", " << unit_vector_j << ", " << unit_vector_k << ")" << endl;
 
     finish_execution();
 }
