@@ -37,6 +37,7 @@ void get_quadratic_for_reals();
 void get_quadratic_for_imaginaries();
 void get_cross_product();
 void get_matrix_symmetry();
+void get_system_of_equations();
 void tabulate_points();
 void write_points_from_linear(int start_range, int end_range, float m, float b);
 void write_points_from_quadratic(int start_range, int end_range, float a, float b, float c);
@@ -89,14 +90,18 @@ int main() {
             clear_console();
             break;
         case 7:
-            // systems of equations
+            clear_console();
+            get_system_of_equations();
+            clear_console();
+            break;
         case 8:
             clear_console();
             tabulate_points();
             clear_console();
             break;
         default:
-            // call other function
+            clear_console();
+            finish_execution();
             break;
         }
 
@@ -411,6 +416,65 @@ void get_matrix_symmetry() {
     }
 
     finish_execution();    
+}
+
+// --------- Function #7 --------- //
+void get_system_of_equations() {
+    float coef[3][3];  
+    float constants[3];  
+
+    cout << "Introduce los coeficientes del sistema de ecuaciones basado en el siguiente modelo usando tus signos:" << endl;
+    cout << "ax1" << " + " << "by1" << " - " << "cz1" << " = " << " dC1 " << endl;
+    cout << "ax2" << " + " << "by2" << " - " << "cz2" << " = " << " dC2 " << endl;
+    cout << "ax3" << " + " << "by3" << " - " << "cz3" << " = " << " dC3 " << endl;
+    cout << endl;
+    
+    // Get coefficient values
+    cout << "*Separa los coeficientes por [espacios]" << endl;
+    for (int i = 0; i < 3; ++i) {
+        cout << "Introduce los coeficientes de la ecuación [" << i + 1 << "] (a, b, c): ";
+        cin >> coef[i][0] >> coef[i][1] >> coef[i][2];
+        cout << "Introduce el valor de d para la ecuación [" << i + 1 << "]: ";
+        cin >> constants[i];
+    }
+       
+    // Calculate matrix's determinant coef
+    float res1 = (coef[0][0] * coef[1][1] * coef[2][2]) + (coef[1][0] * coef[2][1] * coef[0][2]) + (coef[2][0] * coef[0][1] * coef[1][2]);
+    float res2 = (coef[0][2] * coef[1][1] * coef[2][0]) + (coef[1][2] * coef[2][1] * coef[0][0]) + (coef[2][2] * coef[0][1] * coef[1][0]);
+    float detcoef = res1 - res2;
+
+    if (detcoef == 0) {
+        cout << "El sistema no tiene solución única." << endl;
+        return;
+    }
+
+    // Matrix coef_x (replace first column: coef ==> constants)
+    float res3 = (constants[0] * coef[1][1] * coef[2][2]) + (constants[1] * coef[2][1] * coef[0][2]) + (constants[2] * coef[0][1] * coef[1][2]);
+    float res4 = (coef[0][2] * coef[1][1] * constants[2]) + (coef[1][2] * coef[2][1] * constants[0]) + (coef[2][2] * coef[0][1] * constants[1]);
+    float detcoefx = res3 - res4;
+
+    // Matrix coef_y (replace second column: coef ==> constants)
+    float res5 = (coef[0][0] * constants[1] * coef[2][2]) + (coef[1][0] * constants[2] * coef[0][2]) + (coef[2][0] * constants[0] * coef[1][2]);
+    float res6 = (coef[0][2] * constants[1] * coef[2][0]) + (coef[1][2] * constants[2] * coef[0][0]) + (coef[2][2] * constants[0] * coef[1][0]);
+    float detcoefy = res5 - res6;
+
+    // Matrix coef_z (reeplace third column: coef ==> constants)
+     float res7 = (coef[0][0] * coef[1][1] * constants[2]) + (coef[1][0] * coef[2][1] * constants[0]) + (coef[2][0] * coef[0][1] * constants[1]);
+    float res8 = (constants[0] * coef[1][1] * coef[2][0]) + (constants[1] * coef[2][1] * coef[0][0]) + (constants[2] * coef[0][1] * coef[1][0]);
+    float detcoefz = res7 - res8;
+
+    // Calculate solutions ==> x, y, z
+    float x = detcoefx / detcoef;
+    float y = detcoefy / detcoef;
+    float z = detcoefz / detcoef;
+
+    // Show results
+    cout << "\nLa solución es: " << endl;
+    cout << "==> x = " << x << endl;
+    cout << "==> y = " << y << endl;
+    cout << "==> z = " << z << endl;
+
+    finish_execution();
 }
 
 // --------- Function #8 --------- //
