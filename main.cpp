@@ -1,10 +1,9 @@
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <tuple>
-#include <vector>
+#include <iostream> // Input & Output
+#include <string> // For strings
+#include <tuple> // Data structure
+#include <vector> // Data structure
 #include <cmath> // Math operations
-#include <cstdlib> // System operations --> system()
+#include <cstdlib> // System operations Wind/Linux/Mac/Unix--> system()
 #include <iomanip> // For std::setw()
 #include <fstream> // For file handling
 using namespace std;
@@ -54,7 +53,7 @@ int main() {
         clear_console();
         int user_option;
 
-        menu(); // Show user option
+        menu(); // Show menu
         cin >> user_option;
 
         switch (user_option)
@@ -152,7 +151,7 @@ void finish_execution() {
 void displayMatrix(const vector<vector<int>>& matrixA) {
     for (int i = 0; i < matrixA.size(); i++) {
         for (int j = 0; j < matrixA.size(); j++) {
-            cout << setw(4) << matrixA[i][j] << " |"; // Set a width of 4 for each element
+            cout << setw(4) << matrixA[i][j] << " |"; // Set a width of 4 spaces for each element ==> design purposes
         }
         cout << endl;
         
@@ -286,7 +285,7 @@ void get_slope() {
 
 // --------- Function #3 --------- //
 void get_quadratic_for_reals(){
-    float a, b, c;
+    double a, b, c;
     cout << "--> Ingresa el valor de a: ";
     cin >> a;
     cout << "--> Ingresa el valor de b: ";
@@ -294,18 +293,18 @@ void get_quadratic_for_reals(){
     cout << "--> Ingresa el valor de c: ";
     cin >> c;
    
-    float discriminating = (b * b) - 4 * a * c;
+    double discriminating = (b * b) - (4 * a * c);
 
     if (a == 0) {
         cout << "\n* ERROR: No es una ecuación cuadrática, \"a\" tiene que ser diferente de 0." << endl;
     } else if (discriminating > 0) {
-        float root1 = (-b + sqrt(discriminating)) / (2 * a);
-        float root2 = (-b - sqrt(discriminating)) / (2 * a);
+        double root1 = (-b + sqrt(discriminating)) / (2.0 * a);
+        double root2 = (-b - sqrt(discriminating)) / (2.0 * a);
         cout << "\nRaíces reales y distintas: " << endl;
         cout << "--> Raíz 1 = " << root1 << endl;
         cout << "--> Raíz 2 = " << root2 << endl;
     } else if (discriminating == 0) {
-        float raiz = -b / (2 * a);
+        double raiz = -b / (2 * a);
         cout << "\n--> Raíz real doble: " << raiz << endl;
     } else {
         cout << "\n* ADVERTENCIA: Esta ecuación tiene raíces complejas\n  por lo que es imposible resolverla unicamente con números reales." << endl;
@@ -382,40 +381,50 @@ void get_matrix_symmetry() {
     
     cout << "--> Ingresa el tamano de la matriz (max 4): ";
     cin >> matrix_size;
-    
-    vector<vector<int>> matrixA(matrix_size, vector<int>(matrix_size));
-    vector<vector<int>> matrixAT(matrix_size, vector<int>(matrix_size));
 
-    for (int i = 0; i < matrixA.size(); i++) {
-        for (int j = 0; j < matrixA.size(); j++) {
-            cout << "--> Ingresa el valor en (" << i << ", " << j << "): ";
-            cin >> cell_value;
-            matrixA[i][j] = cell_value;
-            matrixAT[j][i] = cell_value;
-        }
-    }
-    
-    cout << "\nMatriz Original:" << endl;
-    displayMatrix(matrixA);
-    
-    cout << "\nMatriz traspuesta para verificar simetria:" << endl;
-    displayMatrix(matrixAT);
-    
-    for (int i = 0; i < matrixA.size(); i++) {
-        for (int j = 0; j < matrixA.size(); j++) {
-            if (matrixA[i][j] != matrixAT[i][j]) {
-                is_symmetric = false;
+    if (matrix_size <= 4 && matrix_size > 0) {
+        vector<vector<int>> matrixA(matrix_size, vector<int>(matrix_size));
+        vector<vector<int>> matrixAT(matrix_size, vector<int>(matrix_size));
+
+        for (int i = 0; i < matrixA.size(); i++) {
+            for (int j = 0; j < matrixA.size(); j++) {
+                cout << "--> Ingresa el valor en (" << i << ", " << j << "): ";
+                cin >> cell_value;
+                matrixA[i][j] = cell_value;
+                matrixAT[j][i] = cell_value;
             }
         }
-    }
-    
-    if (is_symmetric) {
-        cout << "\n==> La matriz es simetrica" << endl;
-    } else {
-        cout << "\n==> La matriz NO es simetrica" << endl;
-    }
+        
+        cout << "\nMatriz Original:" << endl;
+        displayMatrix(matrixA);
+        
+        cout << "\nMatriz traspuesta para verificar simetria:" << endl;
+        displayMatrix(matrixAT);
+        
+        for (int i = 0; i < matrixA.size(); i++) {
+            for (int j = 0; j < matrixA.size(); j++) {
+                if (matrixA[i][j] != matrixAT[i][j]) {
+                    is_symmetric = false;
+                    break;
+                }
+            }
 
-    finish_execution();    
+            if (is_symmetric == false) {
+                break;
+            }
+        }
+        
+        if (is_symmetric) {
+            cout << "\n==> La matriz es simetrica" << endl;
+        } else {
+            cout << "\n==> La matriz NO es simetrica" << endl;
+        }
+
+        finish_execution();
+    } else {
+        cout << "\n==> ERROR: Tamano de la matriz debe estar en el intervalo: 0 < tamano_matriz <= 4" << endl;
+        finish_execution();
+    }
 }
 
 // --------- Function #7 --------- //
@@ -445,6 +454,7 @@ void get_system_of_equations() {
 
     if (detcoef == 0) {
         cout << "El sistema no tiene solución única." << endl;
+        finish_execution();
         return;
     }
 
